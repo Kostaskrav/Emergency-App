@@ -1,0 +1,1007 @@
+openapi: "3.0.2"
+info:
+  description: Control Center API description
+  title: Control Center
+  version: 1.0.0
+paths:
+  /health-check:
+    get:
+      tags:
+        - health-check
+      summary: Check the health of the back-end system
+      description: Check the health of the back-end in regard to its internal systems/subsystems. Only admin can use.
+      operationId: health-check
+      responses:
+        '200':
+          description: Successful response, connected
+        '500':
+          description: Internal server error
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+  
+  /reset:
+    post:
+      tags:
+        - reset
+      summary: Reset the whole back-end system
+      description: Reset the backend, by deleting all underlying data and subsystems. Only admin can use.
+      operationId: reset
+      responses:
+        '200':
+          description: Successful reset
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+          
+  /login:
+    post:
+      tags:
+        - login
+      summary: Login of user
+      operationId: login
+      requestBody:
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/loginInfo"
+        required: true
+      responses:
+        '200':
+          description: Successful authentication and login
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/jwt"
+        '400':
+          description: Bad request or not authenticated
+  
+  /logout:
+    post:
+      tags:
+        - logout
+      summary: Logout of user
+      operationId: logout
+      responses:
+        '200':
+          description: Successful logout
+        '400':
+          description: Bad request
+        '401':
+          description: Not Authorized for this operation
+        '500':
+          description: Internal server error
+          
+  /incidents:
+    get:
+      tags:
+        - incidents
+      summary: Get all incidents available
+      operationId: get_incidents
+      responses:
+        '200':
+          description: Successful retrieval of incidents
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/incidentArray"
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '500':
+          description: Internal server error
+    post:
+      tags:
+        - incidents
+      summary: Submit a new incident
+      description: When an incident is submitted, it is considered open and user are deployed according to the agencies and the levels requested.
+      operationId: post_incidents
+      requestBody:
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/incident"
+        required: true
+      responses:
+        '200':
+          description: Successful submition
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/incident"
+        '500':
+          description: Internal server error
+        '401':
+          description: Not Authorized for this operation
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden to use this endpoint
+          
+  /incidents/{incidentId}:
+    get:
+      tags:
+        - incidentsId
+      summary: Get an incident
+      operationId: get_incidents_byid
+      parameters:
+        - name: incidentId
+          in: path
+          description: ID of incident
+          required: true
+          schema:
+            $ref: "#/components/schemas/incidentId"
+      responses:
+        '200':
+          description: Successful retrieval of wanted incident
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/incident"
+        '404':
+          description: Incident not found
+        '401':
+          description: Not Authorized for this operation
+    delete:
+      tags:
+        - incidentsId
+      summary: Delete an incident
+      operationId: delete_incidents_byid
+      parameters:
+        - name: incidentId
+          in: path
+          description: ID of incident
+          required: true
+          schema:
+            $ref: "#/components/schemas/incidentId"
+      responses:
+        '200':
+          description: Successful deletion of wanted incident
+        '404':
+          description: Incident not found
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+    put:
+      tags:
+        - incidentsId
+      summary: Update an incident
+      operationId: put_incidents_byid
+      parameters:
+        - name: incidentId
+          in: path
+          description: ID of incident
+          required: true
+          schema:
+            $ref: "#/components/schemas/incidentId"
+      requestBody:
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/incident"
+      responses:
+        '200':
+          description: Successful updated incident
+        '404':
+          description: Incident not found
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+    patch:
+      tags:
+        - incidentsId
+      summary: Update an incident
+      description: This endpoint is used to add more available users of any agency to the incident.
+      operationId: patch_incidents_byid
+      parameters:
+        - name: incidentId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/incidentId"
+      requestBody:
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/addUsers"
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+        '500':
+          description: Internal server error
+    
+          
+  /admin/users:
+    get:
+      tags:
+        - AdminUsers
+      summary: Get all users
+      operationId: get_admin_users
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/userArray"
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+
+    post:
+      tags:
+        - AdminUsers
+      summary: Add a new user
+      operationId: post_admin_users
+      requestBody:
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/user"
+        required: true
+      responses:
+        '200':
+          description: Successful addition
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        '500':
+          description: Internal server error
+        '400':
+          description: Bad request
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+          
+  /admin/users/{userId}:
+    get:
+      tags:
+        - AdminUsersId
+      summary: Get a specific user
+      operationId: get_admin_users_byid
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            $ref: "#/components/schemas/userId"
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+          
+    patch:
+      tags:
+        - AdminUsersId
+      summary: Update a user
+      operationId: patch_admin_users_byid
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            $ref: "#/components/schemas/userId"
+      requestBody:
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/user"
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+          
+    delete:
+      tags:
+        - AdminUsersId
+      summary: Delete a user
+      operationId: delete_admin_users_byid
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            $ref: "#/components/schemas/userId"
+      responses:
+        '200':
+          description: Successful deletion
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+          
+  /agencies:
+    get:
+      tags:
+        - agencies
+      summary: Get all agencies available
+      operationId: get_agencies
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/agencyArray"
+        '404':
+          description: Not found
+        '401':
+          description: Not Authorized for this operation
+        '500':
+          description: Internal server error
+    
+    post:
+      tags:
+        - agencies
+      summary: Submit a new agency
+      operationId: post_agencies
+      requestBody:
+        content:
+          application/json:   
+            schema:
+              $ref: "#/components/schemas/agency"
+        required: true
+      responses:
+        '200':
+          description: Successful submition
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/agency"
+        '500':
+          description: Internal server error
+        '401':
+          description: Not Authorized for this operation
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden to use this endpoint
+          
+  /agencies/{agencyId}:
+    get:
+      tags:
+        - agenciesId
+      summary: Get an agency
+      operationId: get_agencies_byid
+      parameters:
+        - name: agencyId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/agencyId"
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/agency"
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+    delete:
+      tags:
+        - agenciesId
+      summary: Delete an agency
+      operationId: delete_agencies_byid
+      parameters:
+        - name: agencyId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/agencyId"
+      responses:
+        '200':
+          description: Successful deletion
+        '404':
+          description: Not found
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+    
+    put:
+      tags:
+        - agenciesId
+      summary: Update an agency
+      operationId: put_agencies_byid
+      parameters:
+        - name: agencyId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/agencyId"
+      requestBody:
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/agency"
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+          
+  /reports:
+    get:
+      tags:
+        - reports
+      summary: Get all reports
+      operationId: get_reports
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/reportArray"
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '500':
+          description: Internal server error
+        '403':
+          description: Forbidden to use this endpoint
+    post:
+      tags:
+        - reports
+      summary: Close an incident
+      description: This endpoint is used to close an incident, which results in reports opening for all users involved.
+      operationId: post_reports
+      requestBody:
+        content:
+          application/json:   
+            schema:
+              $ref: "#/components/schemas/report"
+        required: true
+      responses:
+        '200':
+          description: Successful submition
+        '404':
+          description: Not Found
+        '500':
+          description: Internal server error
+        '401':
+          description: Not Authorized for this operation 
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden to use this endpoint
+          
+  /reports/{reportId}:
+    get:
+      tags:
+        - reportsId
+      summary: Get a report
+      operationId: get_reports_byid
+      parameters:
+        - name: reportId
+          in: path
+          description: ID of report
+          required: true
+          schema:
+            $ref: "#/components/schemas/reportId"
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/report"
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation 
+    delete:
+      tags:
+        - reportsId
+      summary: Delete a report
+      operationId: delete_reports_byid
+      parameters:
+        - name: reportId
+          in: path
+          description: ID of report
+          required: true
+          schema:
+            $ref: "#/components/schemas/reportId"
+      responses:
+        '200':
+          description: Successful deletion
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation 
+        '403':
+          description: Forbidden to use this endpoint
+    put:
+      tags:
+        - reportsId
+      summary: Update a report
+      operationId: put_reports_byid
+      parameters:
+        - name: reportId
+          in: path
+          description: ID of report
+          required: true
+          schema:
+            $ref: "#/components/schemas/reportId"
+      requestBody:
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/report"
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+    patch:
+      tags:
+        - reportsId
+      summary: Update a report
+      description: This endpoint is specifically used by the author of the open to report to provide his comments. about the incident. When the last report closes, a formal report opens automatically.
+      operationId: patch_reports_byid
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/reportId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/comments"
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden to use this endpoint
+        '500':
+          description: Internal server error
+          
+  /formal-reports:
+    get:
+      tags:
+        - formalReports
+      summary: Get all formal reports available
+      operationId: get_freports
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/agencyArray"
+        '404':
+          description: Not found
+        '401':
+          description: Not Authorized for this operation
+        '500':
+          description: Internal server error
+        '403':
+          description: Forbidden to use this endpoint
+    
+          
+  /formal-reports/{formalReportId}:
+    get:
+      tags:
+        - formalReportsId
+      summary: Get a specific formal report
+      operationId: get_freports_byid
+      parameters:
+        - name: formalReportId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/formalReportId"
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/formalReport"
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+        '400':
+          description: Bad request
+          
+    delete:
+      tags:
+        - formalReportsId
+      summary: Delete a formal report
+      operationId: delete_freports_byid
+      parameters:
+        - name: formalReportId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/formalReportId"
+      responses:
+        '200':
+          description: Successful deletion
+        '404':
+          description: Not found
+        '401':
+          description: Not Authorized for this operation
+        '403':
+          description: Forbidden to use this endpoint
+    
+    put:
+      tags:
+        - formalReportsId
+      summary: Update a formal report
+      operationId: put_freports_byid
+      parameters:
+        - name: formalReportId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/formalReportId"
+      requestBody:
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/formalReport"
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden to use this endpoint
+          
+    patch:
+      tags:
+        - formalReportsId
+      summary: Update a formal report
+      operationId: patch_freports_byid
+      parameters:
+        - name: formalReportId
+          in: path
+          required: true
+          schema:
+            $ref: "#/components/schemas/formalReportId"
+      requestBody:
+        content:
+          application/json:    
+            schema:
+              $ref: "#/components/schemas/formalReport"
+            example:
+              injuries: 10,
+              casualties: 2,
+              unitsDeployed: 15,
+              comments: "come comments"
+      responses:
+        '200':
+          description: Successful update
+        '404':
+          description: Not Found
+        '401':
+          description: Not Authorized for this operation
+        '400':
+          description: Bad request
+        '403':
+          description: Forbidden to use this endpoint
+          
+  /profile:
+    get:
+      tags:
+        - profile
+      summary: Get current user's profile
+      operationId: get_profile
+      responses:
+        '200':
+          description: Successful retrieval
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        '401':
+          description: Not Authorized for this operation
+
+components:
+  schemas:
+    agencyId:
+      type: string
+      description: String containing the agency id
+      
+    userId:
+      type: string
+      description: String containing the user id
+    
+    incidentId:
+      type: string
+      description: String containing the incident id
+      
+    reportId:
+      type: string
+      description: String containing the report id
+      
+    formalReportId:
+      type: string
+      description: String containing the formal report id
+  
+    user:
+      type: object
+      required:
+        - userId
+      properties:
+        userId:
+          $ref: "#/components/schemas/userId"
+        username:
+          type: string
+          description: Defines unique username, admin has always 'admin' as username
+        email:
+          type: string
+          description: Defines unique email
+        password:
+          type: string
+          minimum: 8
+          maximum: 31
+          pattern: '^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$'
+        role:
+          type: string
+          description: Role in agency
+        agencyId:
+          type: string
+          description: ID to identify the agency of the user if applicable.
+        firstName:
+          type: string
+        lastName:
+          type: string
+        age:
+          type: number
+        gender:
+          type: string
+        isHeadOfAgency:
+          type: boolean
+          description: Defines users that represent their corresponding agencies (equals false for normal users)
+        x:
+          type: number
+          description: longtitude
+        y:
+          type: number
+          description: latitude
+        isAvailable:
+          type: boolean
+          description: Used only by normal users (not admin,coordinator,head of agency)
+          
+    userArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/user"
+        
+    userArrayPerAgency:
+      type: object
+      description: Object containing pairs of (agencyId - array of users), keeping all users currently in the incident per agency.
+      example:
+        5ee8ebb9dbbb2461557d2983: "array of users for this agency.."
+        5ee8ebb9dbbb2461557d2984: "array of users for this agency.."
+          
+    incident:
+      type: object
+      required:
+        - incidentId
+      properties:
+        incidentId:
+          $ref: "#/components/schemas/incidentId"
+        title:
+          type: string
+          description: String containing the unique incident title
+        x:
+          type: number
+          description: Longtitude of the position of the incident
+        y:
+          type: number
+          description: Latitude of the position of the incident
+        startDate:
+          type: string
+        endDate:
+          type: string
+        telephone:
+          type: string
+          description: Telephone of the caller that initiated the incident
+        level:
+          $ref : "#/components/schemas/levels"
+        isOpen:
+          type: boolean
+        userId:
+          $ref: "#/components/schemas/userId"
+        users:
+          $ref: "#/components/schemas/userArrayPerAgency"
+          
+          
+    incidentArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/incident"
+        
+    report:
+      type: object
+      required:
+        - reportId
+      properties:
+        reportId:
+          $ref: "#/components/schemas/reportId"
+        title:
+          type: string
+          description: Contains the unique report title
+        userId:
+          $ref: "#/components/schemas/userId"
+        incidentId:
+          $ref: "#/components/schemas/incidentId"
+        agencyId:
+          $ref: "#/components/schemas/agencyId"
+        date:
+          type: string
+          description: The start date of the initial incident
+        comments:
+          type: string
+          description: String containing the body of the report
+        isOpen:
+          type: boolean
+          
+    formalReport:
+      type: object
+      required:
+        - reportId
+      properties:
+        formalReportId:
+          $ref: "#/components/schemas/formalReportId"
+        title:
+          type: string
+          description: Contains the unique report title
+        userId:
+          $ref: "#/components/schemas/userId"
+        incidentId:
+          $ref: "#/components/schemas/incidentId"
+        agencyId:
+          $ref: "#/components/schemas/agencyId"
+        date:
+          type: string
+          description: The start date of the initial incident
+        injuries:
+          type: number
+        casualties:
+          type: number
+        unitsDeployed:
+          type: number
+        comments:
+          type: string
+          description: String containing the body of the report
+        isOpen:
+          type: boolean
+          
+    agency:
+      type: object
+      required:
+        - agencyId
+      properties:
+        agencyId:
+          $ref: "#/components/schemas/agencyId"
+        name:
+          type: string
+          description: Unique name of agency
+        userId:
+          $ref: "#/components/schemas/userId"
+        address:
+          type: string
+          description: Physical address of agency (not coordinates)
+        users:
+          $ref: "#/components/schemas/userArray"
+          
+    agencyArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/agency"
+      
+          
+    reportArray:
+      type: array
+      items:
+        $ref: "#/components/schemas/report"
+    
+    loginInfo:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 1
+          maxLength: 31
+          pattern: '^[a-zA-Z ]*$'
+        password:
+          type: string
+          minimum: 8
+          maximum: 31
+          pattern: '^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$'
+          
+    jwt:
+      type: string
+      description: The JSON Web Token provided by the system, used to authenticate users. It must be send by the client in every request.
+      example:
+        token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVlZTMzMmRjZDQyYTVmNDcwMzE2YTc2MSIsInVzZXJuYW1lIjoiYWRtaW4iLCJpYXQiOjE1OTI0Mjk5NjAsImV4cCI6MTU5MjQzMzU2MH0.I2j0TeRBT0OklSisLJi3GeuTOJbJVSKiEj2HQvix3f0
+        
+    levels:
+      type: object
+      description: JSON object containing pairs of (agencyId - level given)
+      example:
+        5ee8ebb9dbbb2461557d2983: 1
+        5ee8ebb9dbbb2461557d2984: 2
+      
+    addUsers:
+      type: object
+      description: JSON object containing (agency - number of users to add) pairs
+      example:
+        addUsers:
+          5ee8cee602d2ee3624835211: 5
+          5ee8cee602d2ee3624835212: 7
+      
+    comments:
+      type: string
+      description: the user comments of the report
+      example:
+        comments: "blah blah blah"
