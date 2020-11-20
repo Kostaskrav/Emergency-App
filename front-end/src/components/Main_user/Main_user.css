@@ -1,0 +1,12 @@
+.Grid_position{
+    margin: 10% 0% 15% 0%;
+}
+
+.Paper_css{
+    padding: 5%;
+}
+
+#alert-dialog-description{
+    max-height: 100%;
+    overflow: hidden;
+}

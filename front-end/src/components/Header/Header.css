@@ -1,0 +1,49 @@
+
+
+.Top_Footer {
+    /* background:linear-gradient(to bottom ,rgb(5, 111, 250) ,rgb(37, 171, 216) ,white ); */
+    /* background: #0052D4;  /* fallback for old browsers */
+    /* background: -webkit-linear-gradient(to top, #6FB1FC, #4364F7, #0052D4);   */
+    /* background: linear-gradient(to top, #6FB1FC, #4364F7, #0052D4);  */
+    
+    background: #373B44;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to top, #4286f4, #373B44);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to top, #4286f4, #373B44); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+
+    max-width: 100%;
+    height: auto;
+    padding: 5px;
+    overflow: hidden; /*In order to not have scrolling left-right in the mobile page */
+    position: relative;
+}
+
+.icon_color{
+    color:white;
+}
+
+.icon_color.search_icon{
+    color: black;
+    margin: 50%;
+}
+
+.titleStyle{
+    font-size:200%;
+    font-style:italic;
+    font-weight:bold;
+    text-align:center;
+    color:white;
+}
+.iconStyle {
+    font-size:225%;
+    font-weight:bold;
+    color:white;
+}
+
+@media screen and (max-width: 680px) {
+    .header_icons {
+        margin-right: 0;
+    }
+} 
+
+

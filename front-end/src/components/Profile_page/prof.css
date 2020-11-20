@@ -1,0 +1,10 @@
+.image{
+  height: 200px;
+  width: 200px;
+}
+.tab{
+background:blue;   /*linear-gradient(to right,blue,lightblue)*/
+}
+@media ( max-width : 680px) {
+  
+}
