@@ -1,0 +1,13 @@
+.flexing_tabs{
+    display: flex;
+}
+
+.tabpanel_fix{
+   
+    width: 90%;
+}
+
+.column_end{
+    max-height: 100%;
+    height: 100%;
+}
